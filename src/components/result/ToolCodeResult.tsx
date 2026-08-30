@@ -10,6 +10,7 @@ import {
   globalInputHeight,
   codeInputHeightOffset
 } from '../../config/uiConfig';
+import { BRANDING } from 'config/branding';
 
 export default function ToolCodeResult({
   title = 'Result',
@@ -38,7 +39,7 @@ export default function ToolCodeResult({
   };
 
   const handleDownload = () => {
-    const filename = `output-omni-tools.${extension}`;
+    const filename = `${BRANDING.defaultOutputPrefix}.${extension}`;
 
     const mimeType = mime.getType(extension) || 'text/plain';
 

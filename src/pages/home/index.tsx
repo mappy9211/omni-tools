@@ -4,6 +4,7 @@ import Categories from './Categories';
 import { Helmet } from 'react-helmet';
 import { useUserTypeFilter } from 'providers/UserTypeFilterProvider';
 import UserTypeFilter from '@components/UserTypeFilter';
+import { BRANDING } from 'config/branding';
 
 export default function Home() {
   const theme = useTheme();
@@ -29,7 +30,7 @@ export default function Home() {
       justifyContent={'center'}
       width={'100%'}
     >
-      <Helmet title={'OmniTools'} />
+      <Helmet title={BRANDING.appName} />
       <Hero />
       <Box my={3}>
         <UserTypeFilter

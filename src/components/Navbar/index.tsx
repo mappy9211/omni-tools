@@ -24,6 +24,7 @@ import { useTheme } from '@mui/material/styles';
 import { Icon } from '@iconify/react';
 import { Mode } from 'components/App';
 import { useTranslation } from 'react-i18next';
+import { BRANDING } from 'config/branding';
 
 interface NavbarProps {
   mode: Mode;
@@ -113,40 +114,49 @@ const Navbar: React.FC<NavbarProps> = ({
             : 'ic:round-contrast'
       }
     />,
-    <Icon
-      onClick={() => window.open('https://discord.gg/SDbbn3hT4b', '_blank')}
-      style={{ cursor: 'pointer' }}
-      fontSize={30}
-      icon={'ic:baseline-discord'}
-    />,
-    <iframe
-      src="https://ghbtns.com/github-btn.html?user=iib0011&repo=omni-tools&type=star&count=true&size=large"
-      frameBorder="0"
-      scrolling="0"
-      width="150"
-      height="30"
-      title="GitHub"
-    ></iframe>,
-    <Button
-      onClick={() => {
-        window.open(
-          'https://drive.google.com/file/d/1-r9-rDYnDJic9dnDywKTAsueehIAVp5F/view?usp=sharing',
-          '_blank'
-        );
-      }}
-      sx={{ borderRadius: '100px' }}
-      variant={'contained'}
-      startIcon={
-        <Icon
-          style={{ cursor: 'pointer' }}
-          fontSize={25}
-          icon={'hugeicons:job-search'}
-        />
-      }
-    >
-      {t('navbar.hireMe')}
-    </Button>
-  ];
+    BRANDING.showDiscord && (
+      <Icon
+        key="discord"
+        onClick={() => window.open('https://discord.gg/SDbbn3hT4b', '_blank')}
+        style={{ cursor: 'pointer' }}
+        fontSize={30}
+        icon={'ic:baseline-discord'}
+      />
+    ),
+    BRANDING.showGitHub && (
+      <iframe
+        key="github"
+        src="https://ghbtns.com/github-btn.html?user=iib0011&repo=omni-tools&type=star&count=true&size=large"
+        frameBorder="0"
+        scrolling="0"
+        width="150"
+        height="30"
+        title="GitHub"
+      ></iframe>
+    ),
+    BRANDING.showHireMe && (
+      <Button
+        key="hireMe"
+        onClick={() => {
+          window.open(
+            'https://drive.google.com/file/d/1-r9-rDYnDJic9dnDywKTAsueehIAVp5F/view?usp=sharing',
+            '_blank'
+          );
+        }}
+        sx={{ borderRadius: '100px' }}
+        variant={'contained'}
+        startIcon={
+          <Icon
+            style={{ cursor: 'pointer' }}
+            fontSize={25}
+            icon={'hugeicons:job-search'}
+          />
+        }
+      >
+        {t('navbar.hireMe')}
+      </Button>
+    )
+  ].filter(Boolean);
   const drawerList = (
     <List>
       {navItems.map((navItem) => (
@@ -157,8 +167,8 @@ const Navbar: React.FC<NavbarProps> = ({
           <ListItemText primary={navItem.label} />
         </ListItemButton>
       ))}
-      {buttons.map((button) => (
-        <ListItem>{button}</ListItem>
+      {buttons.map((button, idx) => (
+        <ListItem key={idx}>{button}</ListItem>
       ))}
     </List>
   );
@@ -187,26 +197,19 @@ const Navbar: React.FC<NavbarProps> = ({
               width={isMobile ? '120px' : '200px'}
             />
           </Link>
-          <Typography
-            component="span"
-            variant="caption"
-            sx={{
-              color: 'text.secondary',
-              fontWeight: 600,
-              whiteSpace: 'nowrap'
-            }}
-          >
-            v{__APP_VERSION__} (
-            <a
-              href={`https://github.com/iib0011/omni-tools/tree/${__COMMIT_HASH__}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: 'inherit' }}
+          {BRANDING.showVersionHash && (
+            <Typography
+              component="span"
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+                fontWeight: 600,
+                whiteSpace: 'nowrap'
+              }}
             >
-              {__COMMIT_HASH__}
-            </a>
-            )
-          </Typography>
+              v{__APP_VERSION__} ({__COMMIT_HASH__})
+            </Typography>
+          )}
         </Stack>
         {isMobile ? (
           <>

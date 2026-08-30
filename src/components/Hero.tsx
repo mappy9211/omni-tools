@@ -26,6 +26,7 @@ import {
 } from '@utils/bookmark';
 import IconButton from '@mui/material/IconButton';
 import { useUserTypeFilter } from '../providers/UserTypeFilterProvider';
+import { BRANDING } from 'config/branding';
 
 const GroupHeader = styled('div')(({ theme }) => ({
   position: 'sticky',
@@ -134,7 +135,7 @@ export default function Hero() {
             display={'inline'}
             color={'primary'}
           >
-            {t('translation:hero.brand')}
+            {BRANDING.appName || t('translation:hero.brand')}
           </Typography>
         </Typography>
       </Stack>

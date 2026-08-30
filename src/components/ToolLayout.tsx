@@ -13,6 +13,7 @@ import { IconifyIcon } from '@iconify/react';
 import { useTranslation } from 'react-i18next';
 import { ToolCategory } from '@tools/defineTool';
 import { FullI18nKey } from '../i18n';
+import { BRANDING } from 'config/branding';
 
 export default function ToolLayout({
   children,
@@ -62,7 +63,7 @@ export default function ToolLayout({
       sx={{ backgroundColor: 'background.default' }}
     >
       <Helmet>
-        <title>{`${toolTitle} - OmniTools`}</title>
+        <title>{`${toolTitle} - ${BRANDING.appName}`}</title>
       </Helmet>
       <Box width={'85%'}>
         <ToolHeader

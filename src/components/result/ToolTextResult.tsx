@@ -7,6 +7,7 @@ import { replaceSpecialCharacters } from '@utils/string';
 import mime from 'mime';
 import { globalInputHeight } from '../../config/uiConfig';
 import { useTranslation } from 'react-i18next';
+import { BRANDING } from 'config/branding';
 
 export default function ToolTextResult({
   title = 'Result',
@@ -32,7 +33,7 @@ export default function ToolTextResult({
       });
   };
   const handleDownload = () => {
-    const filename = `output-omni-tools.${extension}`;
+    const filename = `${BRANDING.defaultOutputPrefix}.${extension}`;
 
     const mimeType = mime.getType(extension) || 'text/plain';
 
