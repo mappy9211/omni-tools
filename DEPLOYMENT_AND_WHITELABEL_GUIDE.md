@@ -10,6 +10,7 @@ This document provides complete instructions for hosting this project on **Ploi.
 3. [Nginx Configuration](#3-nginx-configuration)
 4. [White-Label Customization](#4-white-label-customization)
 5. [Upstream Update Protection & Sync Strategy](#5-upstream-update-protection--sync-strategy)
+6. [Automated CI/CD vs Ploi Deploy Script](#6-automated-cicd-vs-ploi-deploy-script)
 
 ---
 
@@ -31,7 +32,7 @@ This document provides complete instructions for hosting this project on **Ploi.
 ### Step 2: Site Creation
 1. Go to **Sites** → **Add Site**.
 2. Configure:
-   - **Domain**: e.g., `tools.yourdomain.com`
+   - **Domain**: e.g., `tools.sysophost.com`
    - **Project Type**: `Generic / HTML` (or `Static`)
    - **Web directory**: `/dist` (Ploi root: `/home/{user}/{domain}/dist`)
 3. Click **Create Site**.
@@ -39,11 +40,11 @@ This document provides complete instructions for hosting this project on **Ploi.
 ### Step 3: Connect Git Repository
 1. In the site dashboard, go to **Repository**.
 2. Select your Git provider and repository (e.g. `mappy9211/omni-tools`).
-3. Set default branch to `whitelabel` (or `main`).
+3. Set the deployed branch to `whitelabel` (or `main`).
 4. Click **Install repository**.
 
 ### Step 4: Configure Deployment Script
-In the site's **Deploy** tab, replace the deployment script with:
+In the site's **Deploy** tab, set the deployment script to:
 
 ```bash
 cd /home/tools-tovhp/tools.sysophost.com
@@ -51,7 +52,7 @@ cd /home/tools-tovhp/tools.sysophost.com
 # Pull latest commits
 git pull origin {branch}
 
-# Install dependencies
+# Install dependencies cleanly
 npm ci
 
 # Build production assets into /dist
@@ -187,37 +188,56 @@ To replace the brand imagery, simply overwrite the following files:
 1. **Decoupled Architecture**: All branding logic is centralized in `src/config/branding.ts`. Tool additions and bug fixes from the original creator in `src/pages/tools/...` or other services will not interfere with this file.
 2. **Branch Isolation**: The original upstream changes stay on `main`, while your white-label customizations reside on the `whitelabel` branch.
 
-### Automated Sync Helper
-A script has been provided at `scripts/sync-upstream.sh`.
+### Option A: Fully Automated via GitHub Action (Recommended)
+A pre-configured GitHub Action workflow is included in `.github/workflows/sync-upstream.yml`.
 
-To sync with upstream at any time, run:
+- **Automatic Schedule**: Runs automatically every week (Monday at midnight UTC).
+- **Manual Trigger**: You can run it anytime on demand by going to your GitHub repository → **Actions** → **Sync Upstream & Rebase Whitelabel** → **Run workflow**.
+- **Ploi Auto-Deploy**: When the action pushes the rebased `whitelabel` branch, Ploi receives the webhook and automatically deploys the updated build!
+
+### Option B: Local Helper Script
+If you prefer triggering syncs from your terminal:
+
 ```bash
 bash scripts/sync-upstream.sh
 ```
 
-### Manual Sync Workflow
-
-If you prefer running Git commands manually:
+### Option C: Manual Git Commands
 
 ```bash
-# 1. Ensure upstream remote is configured (only needed once)
+# 1. Fetch upstream commits
 git remote add upstream https://github.com/iib0011/omni-tools.git || true
-
-# 2. Fetch all latest upstream commits
 git fetch upstream
 
-# 3. Update your local main branch
+# 2. Update your main branch
 git checkout main
-git merge upstream/main --ff-only
+git pull upstream main
 git push origin main
 
-# 4. Rebase your white-label branch on top of updated main
+# 3. Rebase your white-label branch
 git checkout whitelabel
 git rebase main
 
-# 5. Push the updated whitelabel branch to GitHub (Ploi will auto-deploy)
+# 4. Push updated whitelabel branch (triggers Ploi deployment)
 git push origin whitelabel --force-with-lease
 ```
 
-> **Why `rebase` over `merge`?**
-> Rebasing replays your white-label commits on top of the newest upstream code. This avoids messy merge commits and guarantees that your branding configuration is always the topmost layer.
+---
+
+## 6. Automated CI/CD vs Ploi Deploy Script
+
+### ⚠️ Why `scripts/sync-upstream.sh` should NOT be placed in the Ploi Deploy Script:
+
+1. **Permission Denied on Git Push**: Ploi servers use read-only SSH deploy keys by default. Attempting `git push origin` inside the deployment script will fail.
+2. **Production Downtime on Rebase Conflicts**: If upstream makes a conflicting change, a rebase inside the live deployment runner will pause in a detached HEAD state and fail the deployment, leaving the site broken.
+3. **Deployment Runner Integrity**: Ploi expects the checked-out working tree to stay on `{branch}`. Switching branches during deployment confuses the deploy runner.
+
+### ✅ Recommended Division of Responsibilities:
+- **Upstream Sync & Rebase**: Executed by **GitHub Actions** (`.github/workflows/sync-upstream.yml`) or locally on your machine.
+- **Ploi Deploy Script**: Strictly handles **pulling the latest pre-tested code and building assets**:
+  ```bash
+  cd /home/tools-tovhp/tools.sysophost.com
+  git pull origin {branch}
+  npm ci
+  npm run build
+  ```
