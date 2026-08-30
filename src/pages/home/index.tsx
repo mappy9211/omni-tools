@@ -9,30 +9,32 @@ import { BRANDING } from 'config/branding';
 export default function Home() {
   const theme = useTheme();
   const { selectedUserTypes, setSelectedUserTypes } = useUserTypeFilter();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <Box
       padding={{
-        xs: 1,
-        md: 3,
-        lg: 5
+        xs: 2,
+        md: 4,
+        lg: 6
       }}
       sx={{
-        background: `url(/assets/${
-          theme.palette.mode === 'dark'
-            ? 'background-dark.png'
-            : 'background.svg'
-        })`,
-        backgroundColor: 'background.default'
+        minHeight: 'calc(100vh - 100px)',
+        backgroundColor: 'background.default',
+        backgroundImage: isDark
+          ? 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15), transparent 70%), radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08), transparent 50%)'
+          : 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.1), transparent 70%), radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.06), transparent 50%)',
+        backgroundAttachment: 'fixed'
       }}
       display={'flex'}
       flexDirection={'column'}
       alignItems={'center'}
-      justifyContent={'center'}
+      justifyContent={'flex-start'}
       width={'100%'}
     >
       <Helmet title={BRANDING.appName} />
       <Hero />
-      <Box my={3}>
+      <Box my={4}>
         <UserTypeFilter
           selectedUserTypes={selectedUserTypes}
           onUserTypesChange={setSelectedUserTypes}

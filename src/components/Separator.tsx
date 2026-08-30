@@ -1,20 +1,19 @@
-import { Divider } from '@mui/material';
+import { Divider, useTheme } from '@mui/material';
 import React from 'react';
 
 type SeparatorProps = {
-  backgroundColor: string;
-  margin: string;
+  backgroundColor?: string;
+  margin?: string;
 };
 
-export default function Separator({ backgroundColor, margin }: SeparatorProps) {
+export default function Separator({ margin = '40px' }: SeparatorProps) {
+  const theme = useTheme();
   return (
     <Divider
       orientation="horizontal"
       variant="fullWidth"
-      className="my-4"
       sx={{
-        backgroundColor: backgroundColor,
-        height: '2px',
+        borderColor: theme.palette.divider,
         marginTop: margin,
         marginBottom: margin
       }}

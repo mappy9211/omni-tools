@@ -172,10 +172,22 @@ export default function Hero() {
             placeholder={t('translation:hero.search.placeholder')}
             InputProps={{
               ...params.InputProps,
-              endAdornment: <SearchIcon />,
+              endAdornment: <SearchIcon sx={{ color: 'primary.main', mr: 1 }} />,
               sx: {
-                borderRadius: 4,
-                backgroundColor: 'background.paper'
+                borderRadius: 3,
+                backgroundColor: 'background.paper',
+                border: '1px solid',
+                borderColor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.12)'
+                    : 'rgba(226, 232, 240, 0.9)',
+                boxShadow:
+                  theme.palette.mode === 'dark'
+                    ? '0 4px 20px rgba(0, 0, 0, 0.4)'
+                    : '0 8px 30px rgba(99, 102, 241, 0.08)',
+                '&:hover': {
+                  borderColor: 'primary.main'
+                }
               }
             }}
             onChange={(event) => handleInputChange(event, event.target.value)}
@@ -249,21 +261,33 @@ export default function Hero() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                borderWidth: 1,
-                padding: 1,
-                borderRadius: 3,
-                borderColor: theme.palette.mode === 'dark' ? '#363b41' : 'grey',
-                borderStyle: 'solid',
+                border: '1px solid',
+                padding: '10px 14px',
+                borderRadius: 2.5,
+                borderColor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.08)'
+                    : 'rgba(226, 232, 240, 0.9)',
                 backgroundColor: 'background.paper',
+                boxShadow:
+                  theme.palette.mode === 'dark'
+                    ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+                    : '0 2px 8px rgba(15, 23, 42, 0.04)',
                 cursor: 'pointer',
+                transition: 'all 0.2s ease-in-out',
                 '&:hover': {
-                  backgroundColor: 'background.hover'
+                  borderColor: 'primary.main',
+                  transform: 'translateY(-2px)',
+                  boxShadow:
+                    theme.palette.mode === 'dark'
+                      ? '0 6px 16px rgba(129, 140, 248, 0.2)'
+                      : '0 6px 16px rgba(99, 102, 241, 0.12)'
                 },
                 height: '100%'
               }}
             >
               <Stack direction={'row'} spacing={1} alignItems={'center'}>
-                <Typography textAlign={'center'}>{t(tool.label)}</Typography>
+                <Typography textAlign={'center'} fontWeight={500} fontSize={14}>{t(tool.label)}</Typography>
                 {bookmarkedToolPaths.length > 0 && (
                   <IconButton
                     onClick={(e) => {
